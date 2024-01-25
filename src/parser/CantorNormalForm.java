@@ -75,7 +75,6 @@ public class CantorNormalForm {
     }
     public CantorNormalForm mul(CantorNormalForm other) {
         if (isNum() && other.isNum()) return new CantorNormalForm(getValue() * other.getValue());
-//        if (isNum) return new CantorNormalForm(other);
         if (other.isNum()) return mul(new CNFElement(other.getValue()));
         CantorNormalForm result = new CantorNormalForm(0);
         for (int i = 0; i < other.size(); i++) {
@@ -143,10 +142,10 @@ public class CantorNormalForm {
         if (isNum()) return true;
         if (other.isNum()) return false;
         for (int i = 0; i < min(size(), other.size()); i++) {
-            if (other.getDegree(i).less(getDegree(i))) {
-                return false;
-            } else if (getDegree(i).less(other.getDegree(i))) {
+            if (getDegree(i).less(other.getDegree(i))) {
                 return true;
+            } else if (other.getDegree(i).less(getDegree(i))) {
+                return false;
             } else if (getCoefficient(i) < other.getCoefficient(i)) {
                 return true;
             } else if (getCoefficient(i) > other.getCoefficient(i)) {
@@ -156,8 +155,16 @@ public class CantorNormalForm {
         return size() < other.size();
     }
 
-    public boolean equals(CantorNormalForm obj) {
-        return !(less(obj)) && !(obj.less(this));
+    public boolean equals(CantorNormalForm other) {
+        if (isNum() && other.isNum()) return getValue() == other.getValue();
+        if (isNum() || other.isNum()) return false;
+        if (size() != other.size()) return false;
+        for (int i = 0; i < size(); i++) {
+            if (getCoefficient(i) != other.getCoefficient(i) || !getDegree(i).equals(other.getDegree(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private int size() {
